@@ -53,7 +53,7 @@ npm install express
 
 이제 ssr 디렉토리에 폴더들이 있을 겁니다. 새로운 폴더인 `server`를 만드세요. 그리고 폴더 내부에 `server.js`라는 이름의 파일도 하나 만드세요.
 
-`create-react-app`의 컨벤션에 따라, 앱은 `src/App.js`파일에 있습니다. 우리는 그 컴포넌트를 로드할 것입니다. 그리고 그것을 `react-dom`에 의해 제공되는 `ReactDOMServer.renderToString()`[메소드 설명](https://reactjs.org/docs/react-dom-server.html)을 이용해 문자열로 렌더링 할 것입니다.
+`create-react-app`의 컨벤션에 따라, 앱은 `src/App.js`파일에 있습니다. 우리는 그 컴포넌트를 로드할 것입니다. 그리고 그것을 `react-dom`에 의해 제공되는 `ReactDOMServer.renderToString()`([메소드 설명](https://reactjs.org/docs/react-dom-server.html))을 이용해 문자열로 렌더링 할 것입니다.
 
 `./build/index.html` 파일의 컨텐츠에서 기본적으로 어플리케이션이 후킹되는 곳에 있는 태그인 `<div id="root"></div>`의 placeholder를 `<div id="root">\${ReactDOMServer.renderToString(<App />)</div>`로 바꿀 것입니다.
 
@@ -94,3 +94,22 @@ require('./server')
 ```
 
 리액트 어플리케이션을 빌드해보세요. build/folder가 생성될 것입니다.
+
+```bash
+npm run build
+```
+
+이제 다음 명령어를 실행해보세요.
+
+```bash
+node server/index.js
+```
+
+이 프로젝트는 SSR을 위해 극단적으로 단순화되었다고 했습니다. 그래서,
+
+- imports를 사용할 때, 이미지를 올바르게 랜더링하지 못합니다. 올바르게 렌더링하기 위해서는 Webpack이 필요합니다. (그리고 더 복잡한 프로세스가 요구됩니다.)
+- Page의 헤더 메타데이터를 다루지 못합니다. SEO와 소셜 공유 목적을 위해서는 헤더의 메타데이터가 필수적입니다.
+
+그래서 이 프로젝트는 `ReactDOMServer.renderToString()`과 `ReactDOM.hydrate`를 이용하여 간단한 서버사이드 렌더링을 구현하는 훌륭한 예제인 반면에 실제로 사용하기엔 매우 부족한 예제입니다.
+
+# 라이브러리를 이용한 서버사이드 렌더링
