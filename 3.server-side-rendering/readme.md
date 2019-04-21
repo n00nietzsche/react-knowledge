@@ -1,7 +1,7 @@
 # 들어가기 전에
-- 이 포스팅은 https://reactjs.org/tutorial/tutorial.html 에 있는 포스팅을 번역한 것입니다. 오역이나 의역이 있을 수 있습니다. 지적해주시면 확인 후 바로 정정하겠습니다.
+- 이 포스팅은 https://flaviocopes.com/react-server-side-rendering/ 에 있는 포스팅을 번역한 것입니다. 오역이나 의역이 있을 수 있습니다. 지적해주시면 확인 후 바로 정정하겠습니다.
 
-- original source of this posting is from https://reactjs.org/tutorial/tutorial.html If the original author requests deletion, it will be deleted immediately.
+- original source of this posting is from https://flaviocopes.com/react-server-side-rendering/ If the original author requests deletion, it will be deleted immediately.
 
 - Translated by Jake Seo (서진규)
 
@@ -29,4 +29,32 @@
 - 서버사이드 렌더링의 개념 증명은 매우 간단하다고 말할 수 있지만, 서버사이드 렌더링의 복잡도는 어플리케이션의 복잡도와 함께 증가합니다.
 - 큰 사이즈를 가진 어플리케이션의 서버사이드 렌더링을 하는 것은 꽤 자원 중심적(resource-intensive)일 수 있습니다. 그리고 싱글 보틀넥을 가진 경우, 클라이언트 사이드 렌더링을 할 때보다 더 느린 경험을 제공할 수도 있습니다.
 
+# 최대한 간단하게 서버사이드 렌더링을 하는 리액트 앱 만들어보기
 
+서버사이드 렌더링의 세팅은 매우매우 복잡해질 수 있습니다. 그리고 대부분의 튜토리얼에서는 시작부터 리덕스와 리액트 라우터와 많은 다른 개념들을 포함합니다.
+
+서버사이드 렌더링이 어떻게 동작하는지 이해하기 위해, 개념을 증명하기 위한 코드를 구현하는 기본부터 시작해봅시다.
+
+> 그냥 서버사이드 렌더링을 제공하는데 사용되는 라이브러리만 알고 싶은 것이고 세팅 작업에 대해 별로 알고 싶지 않으면 이 단락은 스킵해도 상관없습니다. 
+
+기본적인 서버사이드 렌더링을 구현하기 위해 우리는 Express를 사용할 것입니다.
+
+> Express를 처음 사용해보신다면 혹은 뭔가 좀 알고 싶으시다면 저자의 무료 핸드북을 참조해보세요. [링크](https://flaviocopes.com/page/ebooks/)
+
+경고: SSR의 복잡도는 어플리케이션의 복잡도와 함께 증가할 수 있습니다. 앞으로 할 것은 기본 리액트 앱을 렌더링하기 위한 최소한의 설정입니다. 더욱 복잡한 니즈를 위해서는 리액트를 위한 서버사이드 렌더링을 확인할 필요가 있을 것입니다. 
+
+아마 리액트 앱을 만들기 위해서 `create-react-app`을 사용한 적이 많았을 겁니다. 지금 만드는 중이었다면, 서버사이드 렌더링을 해보기 위해서 지금 `npx create-react-app ssr` 명령어를 사용해봅시다.
+
+메인 앱 폴더에 가서, 다음 명령어를 실행하세요
+
+```bash
+npm install express
+```
+
+이제 ssr 디렉토리에 폴더들이 있을 겁니다. 새로운 폴더인 `server`를 만드세요. 그리고 폴더 내부에 `server.js`라는 이름의 파일도 하나 만드세요.
+
+`create-react-app`의 컨벤션에 따라, 앱은 `src/App.js`파일에 있습니다. 우리는 그 컴포넌트를 로드할 것입니다. 그리고 그것을 `react-dom`에 의해 제공되는 `ReactDOMServer.renderToString()`[메소드 설명](https://reactjs.org/docs/react-dom-server.html)을 이용해 문자열로 렌더링 할 것입니다.
+
+`./build/index.html` 파일의 컨텐츠에서 기본적으로 어플리케이션이 후킹되는 곳에 있는 태그인 `<div id="root"></div>`의 placeholder를 `<div id="root">\${ReactDOMServer.renderToString(<App />)</div>`로 바꿀 것입니다.
+
+`build`폴더 내부의 모든 내용은 만들어진 그대로 정적으로 Express로 이용할 것입니다. 
