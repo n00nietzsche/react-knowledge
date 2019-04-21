@@ -58,3 +58,39 @@ npm install express
 `./build/index.html` 파일의 컨텐츠에서 기본적으로 어플리케이션이 후킹되는 곳에 있는 태그인 `<div id="root"></div>`의 placeholder를 `<div id="root">\${ReactDOMServer.renderToString(<App />)</div>`로 바꿀 것입니다.
 
 `build`폴더 내부의 모든 내용은 만들어진 그대로 정적으로 Express로 이용할 것입니다. 
+
+클라이언트 어플리케이션에서, `src/index.js`에서 `ReactDOM.render()`를 호출하는 대신,
+```js
+ReactDOM.render(<App />, document.getElementById('root'))
+```
+
+`ReactDOM.hydrate()`를 호출할 것입니다. 이 메소드는 하는 일은 똑같지만 리액트가 로드된 이후에 존재하는 마크업에 이벤트 리스너를 추가할 수 있습니다.
+
+```js
+ReactDOM.hydrate(<App />, document.getElementById('root'))
+```
+
+모든 Node.js의 코드는 바벨에 의해 트랜스컴파일링 될 필요가 있습니다. 서버사이드 Node.js의 코드는 JSX나 ES 모듈(우리가 `include` 문을 위해서 쓰는)에 대해서는 아무것도 모릅니다.
+
+다음 3개의 패키지를 설치하세요.
+
+```bash
+npm install @babel/register @babel/preset-env @babel/preset-react ignore-styles express
+```
+
+[`ignore-styles`](https://www.npmjs.com/package/ignore-styles)는 바벨 유틸리티인데, `import`문법으로 추가된 CSS 파일들을 무시합니다.
+
+`server/index.js`안에 엔트리 포인트를 만들어봅시다.
+
+```js
+require('ignore-styles')
+
+require('@babel/register')({
+  ignore: [/(node_modules)/],
+  presets: ['@babel/preset-env', '@babel/preset-react']
+})
+
+require('./server')
+```
+
+리액트 어플리케이션을 빌드해보세요. build/folder가 생성될 것입니다.
