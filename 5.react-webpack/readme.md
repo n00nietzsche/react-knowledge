@@ -76,3 +76,8 @@ module.export = {
 ```
 
 위의 예에서, 우리는 `output.filename`와 `output.path` 프로퍼티를 사용하여 웹팩에게 우리 번들의 이름과 어디에 생겨날지에 대한 정보를 설정할 수 있습니다. 맨 위에 import된 path 모듈에 대해 궁금하다면, path 모듈은 파일 path를 다루기 위한 [node.js의 핵심 모듈](https://nodejs.org/api/modules.html)입니다. 
+
+> `output` 프로퍼티는 [많은 설정 가능한 특성들](https://webpack.js.org/configuration/output/)이 있고 이 뒤에 숨겨진 개념들을 더 알고 싶다면, [여기서](https://webpack.js.org/concepts/output/) 아웃풋 섹션에 대한 정보를 더 읽어보시면 됩니다.
+
+## 로더(Loaders)
+
