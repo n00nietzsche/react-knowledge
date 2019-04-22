@@ -85,3 +85,29 @@ module.export = {
 
 > 알아둬야 할 것 : `css` 파일들과 같이 다른 어떤 타입의 모듈을 `import` 할 수 있는 능력은 웹팩에 특화된 능력입니다. 그리고 다른 번들러나 태스크 러너에 의해서는 지원되지 않을 수도 있습니다. 우리는 이러한 언어의 확장이 개발자들이 더욱 정확한 dependency graph를 빌드할 수 있도록 돕는 것을 보장한다고 느낍니다.
 
+하이 레벨에서, 웹팩 설정에서 **loaders**는 2개의 프로퍼티를 가집니다.
+
+1. `test` 프로퍼티는 어떤 파일이 변경(transform)되어야 하는지를 구분합니다.
+2. `use` 프로퍼티는 변경(transform)할 때 어떤 loader가 사용되어야 할지를 가리킵니다.
+
+**webpack.config.js**
+```js
+const path = require('path');
+
+module.exports = {
+  output: {
+    filename: 'my-first-webpack.bundle.js'
+  },
+  module: {
+    rules: [
+      { test : /\.txt$/, use: 'raw-loader' }
+    ]
+  }
+};
+```
+
+위의 설정에서는 2개의 요구된 프로퍼티인 `test`와 `use`를 가진 하나의 모듈에 대해 `rules` 프로퍼티를 정의했습니다. 이것은 웹팩 컴파일러에 다음과 같은 사실을 알려줍니다.
+
+> "헤이 웹팩 컴파일러, `require()` / `import` 문 내부에 있는 '.txt'파일을 resolve할 때, 번들에 추가하기 전, 변경(transform)하기 위해 `raw-loader`를 사용해줘.
+
+> 
