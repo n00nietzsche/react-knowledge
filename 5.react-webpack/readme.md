@@ -81,14 +81,14 @@ module.export = {
 
 ## 로더(Loaders)
 
-박스 밖에서, 웹팩은 웹팩은 오직 자바스크립트와 JSON 파일만 이해합니다. **Loaders**는 웹팩이 다른 타입의 파일들도 처리할 수 있고 그것들을 유효한 어플리케이션이 사용할 수 있는 유효한 **[모듈(modules)](https://webpack.js.org/concepts/modules/)** 로 변경하고 dependency graph에 추가할 수 있도록 해줍니다.
+박스 밖에서, 웹팩은 웹팩은 오직 자바스크립트와 JSON 파일만 이해합니다. **Loaders**는 웹팩이 다른 타입의 파일들도 처리할 수 있고 그것들을 유효한 어플리케이션이 사용할 수 있는 유효한 **[모듈(modules)](https://webpack.js.org/concepts/modules/)** 로 변환하고 dependency graph에 추가할 수 있도록 해줍니다.
 
 > 알아둬야 할 것 : `css` 파일들과 같이 다른 어떤 타입의 모듈을 `import` 할 수 있는 능력은 웹팩에 특화된 능력입니다. 그리고 다른 번들러나 태스크 러너에 의해서는 지원되지 않을 수도 있습니다. 우리는 이러한 언어의 확장이 개발자들이 더욱 정확한 dependency graph를 빌드할 수 있도록 돕는 것을 보장한다고 느낍니다.
 
 하이 레벨에서, 웹팩 설정에서 **loaders**는 2개의 프로퍼티를 가집니다.
 
-1. `test` 프로퍼티는 어떤 파일이 변경(transform)되어야 하는지를 구분합니다.
-2. `use` 프로퍼티는 변경(transform)할 때 어떤 loader가 사용되어야 할지를 가리킵니다.
+1. `test` 프로퍼티는 어떤 파일이 변환(transform)되어야 하는지를 구분합니다.
+2. `use` 프로퍼티는 변환(transform)할 때 어떤 loader가 사용되어야 할지를 가리킵니다.
 
 **webpack.config.js**
 ```js
@@ -108,6 +108,55 @@ module.exports = {
 
 위의 설정에서는 2개의 요구된 프로퍼티인 `test`와 `use`를 가진 하나의 모듈에 대해 `rules` 프로퍼티를 정의했습니다. 이것은 웹팩 컴파일러에 다음과 같은 사실을 알려줍니다.
 
-> "헤이 웹팩 컴파일러, `require()` / `import` 문 내부에 있는 '.txt'파일을 resolve할 때, 번들에 추가하기 전, 변경(transform)하기 위해 `raw-loader`를 사용해줘.
+> "헤이 웹팩 컴파일러, `require()` / `import` 문 내부에 있는 '.txt'파일을 resolve할 때, 번들에 추가하기 전, 변환(transform)하기 위해 `raw-loader`를 사용해줘.
 
-> 
+> 정규표현식을 이용하여 파일을 매칭시킬 때, 따옴표를 사용함에 있어서 조심하세요. 예를 들면 `/\.txt$/`는 `'/\.txt$/'`나 `"/\.txt$/"`와 같지 않습니다. 맨 앞의 정규표현식은 웹팩에게 .txt로 끝나는 파일을 매칭시키라고 하는 것이고 뒤에 것은 절대 경로에 일치하는 하나의 파일 '.txt'를 찾아달라고 하는 것입니다. 아마 의도한 바가 아닐 것입니다.
+
+[loader section](https://webpack.js.org/concepts/loaders/)에 로더를 추가할 때 더 많은 정보를 얻고싶으시다면 앞의 loader section 글자를 클릭해보세요.
+
+## 플러그인(Plugins)
+
+로더가 모듈의 몇몇 특정한 타입의 모듈들을 변환(transform)하기 위해 사용되는 반면에, 플러그인은 번들 최적화, 자원 관리, 환경변수 삽입과 같은 보다 많은 범위의 작업을 수행하는 데에 있어 능력을 끌어올릴 수 있습니다.
+
+> [플러그인 인터페이스](https://webpack.js.org/api/plugins/)를 확인하고 웹팩의 능력치를 확장하기 위해 플러그인을 어떻게 사용할 수 있는지도 알아보세요.
+
+플러그인을 사용하기 위해, `require()`를 해야합니다. 그리고 `module.export`에 `plugin`배열을 추가하고 그 안에 플러그인을 넣어봅시다. 대부분의 플러그인은 옵션을 이용하여 커스터마이징이 가능합니다. 플러그인을 많은 다른 목적을 위해서 몇번이든 설정할 수 있습니다. `new` 연산자를 통한 호출을 이용하여 인스턴스를 생성하면 됩니다.
+
+**webpack.config.js**
+```js
+const HtmlWebpackPlugin = require('html-webpack-plugin'); //installed via npm
+const webpack = require('webpack'); //to access built-in plugins
+
+module.exports = {
+  module: {
+    rules: [
+      { test: /\.txt$/, use: 'raw-loader' }
+    ]
+  },
+  plugins: [
+    new HtmlWebpackPlugin({template: './src/index.html'})
+  ]
+};
+```
+
+위의 예제에서 `html-webpack-plugin`은 생성된 번들을 자동으로 어플리케이션에 주입하여 HTML 파일을 생성해냅니다. 
+
+> 웹팩이 제공하는 많은 독창적인 플러그인들이 존재합니다. [플러그인 리스트](https://webpack.js.org/plugins/)를 확인하세요!
+
+웹팩 설정에서 플러그인을 사용하는 것은 직관적입니다. 하지만, 더 알아볼 가치가 있는 다양한 사용 용례들이 있습니다. [여기를 클릭해서 더 알아보세요.](https://webpack.js.org/concepts/plugins/)
+
+## 모드(Mode)
+
+`mode` 파라미터를 `development`, `production`이나 `none`으로 셋팅함으로써, 각 환경에 맞는 웹팩의 빌트인 최적화를 사용할 수 있습니다. 기본 값은 `production`입니다.
+
+```js
+module.exports = {
+  mode: 'production'
+};
+```
+
+[모드 설정](https://webpack.js.org/configuration/mode/)에 대해 더 알아보세요. 그리고 각 값에 어떤 최적화가 일어나는지도 알아보세요.
+
+## 브라우저 호환성(Browser Compatibility)
+
+웹팩은 [ES5-호환](https://kangax.github.io/compat-table/es5/)인 모든 브라우저를 지원합니다. 웹팩은 `import()`와 `require.ensure()`를 위한 `Promise`를 필요로 합니다. 만약 오래된 브라우저를 지원하고 싶다면, 이러한 식들을 사용하기 전에 [poly-fill 불러오기]가 필요할 것입니다.
