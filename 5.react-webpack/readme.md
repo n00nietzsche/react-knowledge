@@ -21,7 +21,7 @@
 >
 >웹팩이 어플리케이션을 처리할 때, 웹팩은 설정 파일이나 커멘드 라인에 있는 정의된 모듈 리스트부터 시작합니다. 이러한 [엔트리 포인트(시작점)](https://webpack.js.org/concepts/entry-points/)부터 시작하면서, 웹팩은 재귀적으로 어플리케이션에 필요한 모든 모듈을 포함하는 의존성 그래프(dependency graph)를 만듭니다. 그리고 그 모듈들을 작은 숫자의 번들 안에 넣습니다. 주로 브라우저에 의해 로딩되는 것은 1개입니다.
 
-버전 4.0.0부터, **웹팩은 프로젝트를 번들링하기 위해 설정 파일을 필요로 하지않습니다.** 그럼에도 불구하고 [설정](https://webpack.js.org/configuration/)해서 엄청나게 나아질 수 있다면 할 수 있습니다. 
+버전 4.0.0부터, **웹팩은 프로젝트를 번들링하기 위해 설정 파일을 필요로 하지않습니다.** 그럼에도 불구하고 [설정](https://webpack.js.org/configuration/)은 당연히 사용자에 맞게 가능합니다.
 
 시작하기 위해서는 **핵심 개념**들을 이해하면 됩니다.
 
@@ -40,3 +40,39 @@
 - [간단한 번들러 라이브 코딩](https://www.youtube.com/watch?v=Gc9-7PBqOC8)
 - [간단한 모듈 번들러의 상세한 설명](https://github.com/ronami/minipack)
 
+## 엔트리
+
+엔트리 포인트는 웹팩이 denpenency graph를 만들기 위해 어떤 모듈을 사용할지를 가리키는 것입니다. 웹팩은 직접적이든 간접적이든 엔트리 포인트가 의존하는 어떤 다른 모듈들과 라이브러리들을 알아낼 것입니다.
+
+기본값으로 `./src/index.js`가 설정되어 있습니다. 하지만 웹팩 설정에서 엔트리 프로퍼티를 설정함으로써 다른 파일을 설정할 수도 있습니다. 예를 들면
+
+**webpack.config.js**
+```js
+module.exports = {
+  entry: './path/to/my/entry/file.js'  
+};
+```
+
+[엔트리 포인트 섹션에 대해 더 배워보기](https://webpack.js.org/concepts/entry-points/)
+
+## 아웃풋(Output, 출력)
+>역자 주: 아웃풋이라는 단어는 대부분의 프로그래머가 친숙할 것이라 생각하기에 한글 그대로 아웃풋으로 번역하겠습니다.
+
+**아웃풋** 프로퍼티는 웹팩이 번들을 어디에 생성할지에 대해 그리고 파일들의 이름을 어떻게 지을지에 대해 알려줍니다. 메인 아웃풋 파일을 위한 기본 값은 `./dist/main.js`이고, 나머지 생성된 파일은 `./dist`가 기본 값입니다.
+
+설정에서 `output` 부분을 수정하면, 이 부분이 어떻게 진행될지에 대해 설정할 수 있습니다.
+
+**webpack.config.js**
+```js
+const path = require('path');
+
+module.export = {
+  entry: './path/to/my/entry/file.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'my-first-webpack.bundle.js'
+  }
+};
+```
+
+위의 예에서, 우리는 `output.filename`와 `output.path` 프로퍼티를 사용하여 웹팩에게 우리 번들의 이름과 어디에 생겨날지에 대한 정보를 설정할 수 있습니다. 맨 위에 import된 path 모듈에 대해 궁금하다면, path 모듈은 파일 path를 다루기 위한 [node.js의 핵심 모듈](https://nodejs.org/api/modules.html)입니다. 
